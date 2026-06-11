@@ -289,6 +289,95 @@ public class HelloServlet extends HttpServlet {
 
 ---
 
-## 📄 라이선스
+## 📄 요약
+<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/c9b340de-50eb-4a6d-b191-9524a12673a0" />
+<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/16015fbd-adbb-41c5-86cd-aa75b4d37c4e" />
+<img width="2440" height="974" alt="image" src="https://github.com/user-attachments/assets/6313d8f0-168d-47db-8d16-048bec6ee00e" />
+<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/0b84e1bb-b207-482f-ab9b-68d08d1bb1ac" />
+<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/fbd67ae1-4968-44ed-b230-2913f4b11cbd" />
+<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/53d6bc3a-9783-431d-8f54-5efa4304ab5e" />
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/ebc65244-b942-4b61-a636-c210d8993fcf" />
 
-MIT License
+
+<br>
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/195fdf31-2298-4607-bbc2-711703bfa747" />
+<img width="1659" height="685" alt="image" src="https://github.com/user-attachments/assets/86c034f8-c9d3-46f3-aa34-63d1010a6847" />
+<img width="977" height="540" alt="image" src="https://github.com/user-attachments/assets/d496607b-ce80-4d33-a2a1-940038619f36" />
+<img width="791" height="341" alt="image" src="https://github.com/user-attachments/assets/fe3bf019-f5f6-425b-9fcf-4ee169d0abe9" />
+
+
+<br>
+
+```
+package org.scoula.ex04;
+
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.IOException;
+
+@WebFilter(urlPatterns = "/*")
+public class RequestLogFilter implements Filter {
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        System.out.println("RequestLogFilter 초기화");
+    }
+
+    @Override
+    public void doFilter(ServletRequest request,
+                         ServletResponse response,
+                         FilterChain chain)
+            throws IOException, ServletException {
+
+        // ServletRequest를 HttpServletRequest로 형변환
+        HttpServletRequest req = (HttpServletRequest) request;
+
+        // 요청 URI 출력
+        String uri = req.getRequestURI();
+        System.out.println("[요청 URL] " + uri);
+
+        // 다음 필터 또는 서블릿으로 이동
+        chain.doFilter(request, response);
+    }
+
+    @Override
+    public void destroy() {
+        System.out.println("RequestLogFilter 종료");
+    }
+}
+
+```
+
+<br>
+
+```
+
+필터 적용 순서가 중요한 경우(web.xml에 등록한 순서대로 필터가 적용됨.)
+<filter>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.scoula.filter.CharacterEncodingFilter</filter-class>
+</filter>
+
+<filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+<filter>
+    <filter-name>requestLogFilter</filter-name>
+    <filter-class>org.scoula.filter.RequestLogFilter</filter-class>
+</filter>
+
+<filter-mapping>
+    <filter-name>requestLogFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+```
+
+<br>
+
+
+

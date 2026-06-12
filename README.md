@@ -10,25 +10,50 @@
 
 ```
 ex04/
-├── src/main/
-│   ├── java/
-│   │   └── org/scoula/ex04/
-│   │       ├── HelloServlet.java
-│   │       ├── RequestLogFilter.java
-│   │       ├── filter/
-│   │       │   └── CharacterEncodeFilter.java
-│   │       └── session/
-│   │           ├── CartSaveServlet.java
-│   │           └── CartViewServlet.java
-│   └── webapp/
-│       ├── index.jsp
-│       ├── session_product.jsp
-│       └── WEB-INF/
-│           └── web.xml
-├── build.gradle
-├── settings.gradle
-└── gradle 빌드 설정 파일들
+├── .gitignore                          # Git 제외 파일 설정
+├── README.md                           # 프로젝트 문서
+├── build.gradle                        # Gradle 빌드 설정 파일
+├── settings.gradle                     # Gradle 프로젝트 설정
+├── gradlew                             # Gradle Wrapper (Linux/Mac)
+├── gradlew.bat                         # Gradle Wrapper (Windows)
+│
+├── gradle/                             # Gradle 관련 파일
+│   └── wrapper/                        # Gradle Wrapper 저장소
+│
+├── .idea/                              # IntelliJ IDEA 프로젝트 설정
+│
+└── src/main/
+    ├── java/org/scoula/ex04/
+    │   ├── HelloServlet.java                           # 기본 Servlet 예제
+    │   ├── RequestLogFilter.java                       # 요청 로깅 필터 (신규)
+    │   │
+    │   ├── filter/
+    │   │   ├── CharacterEncodeFilter.java              # UTF-8 인코딩 필터
+    │   │   └── RequestLogFilter.java                   # 요청 URI 로깅 필터
+    │   │
+    │   └── session/
+    │       ├── CartSaveServlet.java                    # 상품 저장 Servlet
+    │       └── CartViewServlet.java                    # 장바구니 조회 Servlet
+    │
+    └── webapp/
+        ├── index.jsp                                    # 메인 페이지
+        ├── session_product.jsp                          # 상품 선택 폼
+        │
+        └── WEB-INF/
+            └── web.xml                                  # 웹 애플리케이션 설정 파일
 ```
+
+### 📊 디렉토리별 설명
+
+| 디렉토리 | 설명 |
+|---------|------|
+| **src/main/java** | Java 소스 코드 저장소 |
+| **src/main/java/org/scoula/ex04** | 메인 패키지 (Servlet 클래스) |
+| **src/main/java/org/scoula/ex04/filter** | Filter 클래스들 |
+| **src/main/java/org/scoula/ex04/session** | Session 관련 Servlet |
+| **src/main/webapp** | 웹 애플리케이션 리소스 (JSP, HTML 등) |
+| **src/main/webapp/WEB-INF** | 웹 설정 파일 저장소 |
+| **gradle** | Gradle Wrapper 및 관련 설정 |
 
 ---
 
@@ -62,20 +87,28 @@ graph TD
 
 ### 1️⃣ **Java Servlet & Filter 클래스**
 
-| 파일명 | 경로 | 설명 | URL Mapping |
-|--------|------|------|------------|
-| **HelloServlet** | `org.scoula.ex04` | 기본 Servlet 예제, "Hello World!" 출력 | `/hello-servlet` |
-| **CharacterEncodeFilter** | `org.scoula.ex04.filter` | 모든 요청의 UTF-8 인코딩 처리 | `/*` (모든 경로) |
-| **RequestLogFilter** | `org.scoula.ex04` | 모든 요청 URI를 로깅 처리 | `/*` (모든 경로) |
-| **CartSaveServlet** | `org.scoula.ex04.session` | 상품을 Session에 저장 | `/cart_save` |
-| **CartViewServlet** | `org.scoula.ex04.session` | Session에서 상품 목록 조회 | `/cart_view` |
+| 파일명 | 경로 | 설명 | URL Mapping | 크기 |
+|--------|------|------|------------|------|
+| **HelloServlet** | `org.scoula.ex04` | 기본 Servlet 예제, "Hello World!" 출력 | `/hello-servlet` | 1.1 KB |
+| **CharacterEncodeFilter** | `org.scoula.ex04.filter` | 모든 요청의 UTF-8 인코딩 처리 | `/*` (모든 경로) | 0.8 KB |
+| **RequestLogFilter** | `org.scoula.ex04.filter` | 모든 요청 URI를 로깅 처리 | `/*` (모든 경로) | 1.1 KB |
+| **CartSaveServlet** | `org.scoula.ex04.session` | 상품을 Session에 저장 | `/cart_save` | 3.5 KB |
+| **CartViewServlet** | `org.scoula.ex04.session` | Session에서 상품 목록 조회 | `/cart_view` | 1.3 KB |
 
 ### 2️⃣ **JSP 뷰 페이지**
 
+| 파일명 | 설명 | 크기 |
+|--------|------|------|
+| **index.jsp** | 애플리케이션 진입점, Hello Servlet 링크 제공 | 0.4 KB |
+| **session_product.jsp** | 상품 선택 폼 (라디오버튼: BMW, SM5, K7) | 0.4 KB |
+
+### 3️⃣ **설정 파일**
+
 | 파일명 | 설명 |
 |--------|------|
-| **index.jsp** | 애플리케이션 진입점, Hello Servlet 링크 제공 |
-| **session_product.jsp** | 상품 선택 폼 (라디오버튼: BMW, SM5, K7) |
+| **web.xml** | 웹 애플리케이션 배포 설정, Filter 및 Servlet 매핑 |
+| **build.gradle** | Gradle 빌드 설정, 의존성 정의 |
+| **settings.gradle** | Gradle 프로젝트 이름 설정 |
 
 ---
 
@@ -117,7 +150,7 @@ public class CharacterEncodeFilter implements Filter {
 모든 HTTP 요청의 URI를 로깅하는 필터입니다. 요청 추적 및 디버깅에 유용합니다.
 
 ```java
-package org.scoula.ex04;
+package org.scoula.ex04.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
@@ -303,7 +336,7 @@ public class HelloServlet extends HttpServlet {
 
 **주의**: 필터 순서가 중요합니다. 일반적으로 다음 순서로 적용됩니다:
 
-1. **CharacterEncodeFilter** - 먼저 UTF-8 인코딩 설정 (데이터 인코딩 필수)
+1. **CharacterEncodeFilter** - 먼저 UTF-8 인코딩 설정 (데이터 인코��� 필수)
 2. **RequestLogFilter** - 그 다음 요청 URI 로깅
 
 web.xml에 등록하면 등록 순서대로 필터가 적용됩니다:
@@ -321,7 +354,7 @@ web.xml에 등록하면 등록 순서대로 필터가 적용됩니다:
 
 <filter>
     <filter-name>requestLogFilter</filter-name>
-    <filter-class>org.scoula.ex04.RequestLogFilter</filter-class>
+    <filter-class>org.scoula.ex04.filter.RequestLogFilter</filter-class>
 </filter>
 
 <filter-mapping>
@@ -370,6 +403,7 @@ web.xml에 등록하면 등록 순서대로 필터가 적용됩니다:
 ✅ Servlet과 JSP 연동  
 ✅ @WebServlet 애노테이션을 이용한 URL 매핑  
 ✅ ArrayList를 이용한 동적 데이터 관리  
+✅ Gradle을 이용한 프로젝트 빌드 관리
 
 ---
 
@@ -379,4 +413,12 @@ web.xml에 등록하면 등록 순서대로 필터가 적용됩니다:
 |------|---------|------|
 | v1.0 | 초기 프로젝트 생성 (Session + CharacterEncodeFilter) | 2026-06-11 |
 | v1.1 | RequestLogFilter 추가 및 Filter 순서 최적화 | 2026-06-12 |
+| v1.2 | 상세한 프로젝트 구조 및 파일 정보 추가 | 2026-06-12 |
 
+---
+
+## 🔗 관련 링크
+
+- [GitHub Repository](https://github.com/metaapple/ex04)
+- [Apache Tomcat](https://tomcat.apache.org/)
+- [Gradle Documentation](https://gradle.org/documentation/)

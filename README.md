@@ -2,7 +2,7 @@
 
 ## 📋 프로젝트 개요
 
-이 프로젝트는 **Java Servlet/JSP**를 기반으로 한 웹 애플리케이션으로, **HTTP Session**을 활용하여 사용자의 장바구니 정보를 서버에 저장하고, **Filter**를 통해 문자 인코딩을 관리합니다.
+이 프로젝트는 **Java Servlet/JSP**를 기반으로 한 웹 애플리케이션으로, **HTTP Session**을 활용하여 사용자의 장바구니 정보를 서버에 저장하고, **Filter**를 활용하여 요청/응답을 전처리하는 방법을 학습합니다.
 
 ---
 
@@ -14,6 +14,7 @@ ex04/
 │   ├── java/
 │   │   └── org/scoula/ex04/
 │   │       ├── HelloServlet.java
+│   │       ├── RequestLogFilter.java
 │   │       ├── filter/
 │   │       │   └── CharacterEncodeFilter.java
 │   │       └── session/
@@ -44,14 +45,15 @@ graph TD
     F --> G[session_product.jsp]
     G --> H[상품 선택 및 제출]
     H --> I[CharacterEncodeFilter<br/>UTF-8 인코딩]
-    I --> J[CartSaveServlet 실행]
-    J --> K[Session에 상품 저장]
-    K --> L[추가 확인 페이지]
+    I --> J[RequestLogFilter<br/>요청 로깅]
+    J --> K[CartSaveServlet 실행]
+    K --> L[Session에 상품 저장]
+    L --> M[추가 확인 페이지]
     
-    L --> M{장바구니 보기}
-    M --> N[CartViewServlet 실행]
-    N --> O[Session에서 상품 목록 조회]
-    O --> P[장바구니 목록 출력]
+    M --> N{장바구니 보기}
+    N --> O[CartViewServlet 실행]
+    O --> P[Session에서 상품 목록 조회]
+    P --> Q[장바구니 목록 출력]
 ```
 
 ---
@@ -64,6 +66,7 @@ graph TD
 |--------|------|------|------------|
 | **HelloServlet** | `org.scoula.ex04` | 기본 Servlet 예제, "Hello World!" 출력 | `/hello-servlet` |
 | **CharacterEncodeFilter** | `org.scoula.ex04.filter` | 모든 요청의 UTF-8 인코딩 처리 | `/*` (모든 경로) |
+| **RequestLogFilter** | `org.scoula.ex04` | 모든 요청 URI를 로깅 처리 | `/*` (모든 경로) |
 | **CartSaveServlet** | `org.scoula.ex04.session` | 상품을 Session에 저장 | `/cart_save` |
 | **CartViewServlet** | `org.scoula.ex04.session` | Session에서 상품 목록 조회 | `/cart_view` |
 
@@ -106,6 +109,50 @@ public class CharacterEncodeFilter implements Filter {
     @Override
     public void destroy() {
         System.out.println("필터 소멸됨.");
+    }
+}
+```
+
+### RequestLogFilter.java (신규 추가)
+모든 HTTP 요청의 URI를 로깅하는 필터입니다. 요청 추적 및 디버깅에 유용합니다.
+
+```java
+package org.scoula.ex04;
+
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.IOException;
+
+@WebFilter(urlPatterns = "/*")
+public class RequestLogFilter implements Filter {
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        System.out.println("RequestLogFilter 초기화");
+    }
+
+    @Override
+    public void doFilter(ServletRequest request,
+                         ServletResponse response,
+                         FilterChain chain)
+            throws IOException, ServletException {
+
+        // ServletRequest를 HttpServletRequest로 형변환
+        HttpServletRequest req = (HttpServletRequest) request;
+
+        // 요청 URI 출력
+        String uri = req.getRequestURI();
+        System.out.println("[요청 URL] " + uri);
+
+        // 다음 필터 또는 서블릿으로 이동
+        chain.doFilter(request, response);
+    }
+
+    @Override
+    public void destroy() {
+        System.out.println("RequestLogFilter 종료");
     }
 }
 ```
@@ -244,10 +291,44 @@ public class HelloServlet extends HttpServlet {
 | 개념 | 설명 | 사용처 |
 |------|------|--------|
 | **Session** | 서버에 저장되는 사용자 상태 정보 (유지 기간 동안 유지) | 장바구니 데이터 저장 |
-| **Filter** | 모든 요청/응답을 전처리/후처리하는 컴포넌트 | 문자 인코딩 처리 |
+| **Filter** | 모든 요청/응답을 전처리/후처리하는 컴포넌트 | 문자 인코딩 처리, 요청 로깅 |
+| **Filter Chain** | 여러 필터가 순차적으로 실행되는 구조 | 인코딩 → 로깅 → Servlet 순서 |
 | **@WebServlet** | URL 패턴을 Servlet 클래스와 매핑하는 애노테이션 | 라우팅 설정 |
 | **HttpSession** | 클라이언트별 고유한 세션 객체 | 사용자별 데이터 관리 |
 | **ArrayList** | 동적 배열로 여러 상품을 저장 | 장바구니 목록 관리 |
+
+---
+
+## 🔗 필터 적용 순서의 중요성
+
+**주의**: 필터 순서가 중요합니다. 일반적으로 다음 순서로 적용됩니다:
+
+1. **CharacterEncodeFilter** - 먼저 UTF-8 인코딩 설정 (데이터 인코딩 필수)
+2. **RequestLogFilter** - 그 다음 요청 URI 로깅
+
+web.xml에 등록하면 등록 순서대로 필터가 적용됩니다:
+
+```xml
+<filter>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.scoula.filter.CharacterEncodingFilter</filter-class>
+</filter>
+
+<filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+<filter>
+    <filter-name>requestLogFilter</filter-name>
+    <filter-class>org.scoula.ex04.RequestLogFilter</filter-class>
+</filter>
+
+<filter-mapping>
+    <filter-name>requestLogFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
 
 ---
 
@@ -266,6 +347,7 @@ public class HelloServlet extends HttpServlet {
    - `index.jsp` → Hello Servlet 클릭
    - `session_product.jsp` → 상품 선택 → 카트에 저장
    - `cart_view` → 장바구니 목록 확인
+   - 콘솔 로그에서 요청 URL 확인
 
 ---
 
@@ -283,106 +365,18 @@ public class HelloServlet extends HttpServlet {
 
 ✅ HTTP Session을 이용한 상태 정보 관리  
 ✅ Filter를 통한 문자 인코딩 처리  
+✅ 요청 로깅을 위한 Filter 구현  
+✅ **Filter Chain의 순서 중요성**  
 ✅ Servlet과 JSP 연동  
 ✅ @WebServlet 애노테이션을 이용한 URL 매핑  
 ✅ ArrayList를 이용한 동적 데이터 관리  
 
 ---
 
-## 📄 요약
-<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/c9b340de-50eb-4a6d-b191-9524a12673a0" />
-<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/16015fbd-adbb-41c5-86cd-aa75b4d37c4e" />
-<img width="2440" height="974" alt="image" src="https://github.com/user-attachments/assets/6313d8f0-168d-47db-8d16-048bec6ee00e" />
-<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/0b84e1bb-b207-482f-ab9b-68d08d1bb1ac" />
-<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/fbd67ae1-4968-44ed-b230-2913f4b11cbd" />
-<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/53d6bc3a-9783-431d-8f54-5efa4304ab5e" />
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/ebc65244-b942-4b61-a636-c210d8993fcf" />
+## 📊 변경 이력
 
-
-<br>
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/195fdf31-2298-4607-bbc2-711703bfa747" />
-<img width="1659" height="685" alt="image" src="https://github.com/user-attachments/assets/86c034f8-c9d3-46f3-aa34-63d1010a6847" />
-<img width="977" height="540" alt="image" src="https://github.com/user-attachments/assets/d496607b-ce80-4d33-a2a1-940038619f36" />
-<img width="791" height="341" alt="image" src="https://github.com/user-attachments/assets/fe3bf019-f5f6-425b-9fcf-4ee169d0abe9" />
-
-
-<br>
-
-```
-package org.scoula.ex04;
-
-import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.http.HttpServletRequest;
-
-import java.io.IOException;
-
-@WebFilter(urlPatterns = "/*")
-public class RequestLogFilter implements Filter {
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        System.out.println("RequestLogFilter 초기화");
-    }
-
-    @Override
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain)
-            throws IOException, ServletException {
-
-        // ServletRequest를 HttpServletRequest로 형변환
-        HttpServletRequest req = (HttpServletRequest) request;
-
-        // 요청 URI 출력
-        String uri = req.getRequestURI();
-        System.out.println("[요청 URL] " + uri);
-
-        // 다음 필터 또는 서블릿으로 이동
-        chain.doFilter(request, response);
-    }
-
-    @Override
-    public void destroy() {
-        System.out.println("RequestLogFilter 종료");
-    }
-}
-
-```
-
-<br>
-
-```
-
-필터 적용 순서가 중요한 경우(web.xml에 등록한 순서대로 필터가 적용됨.)
-<filter>
-    <filter-name>encodingFilter</filter-name>
-    <filter-class>org.scoula.filter.CharacterEncodingFilter</filter-class>
-</filter>
-
-<filter-mapping>
-    <filter-name>encodingFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-</filter-mapping>
-
-<filter>
-    <filter-name>requestLogFilter</filter-name>
-    <filter-class>org.scoula.filter.RequestLogFilter</filter-class>
-</filter>
-
-<filter-mapping>
-    <filter-name>requestLogFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-</filter-mapping>
-
-```
-
-<br>
-
-<img width="2515" height="1497" alt="image" src="https://github.com/user-attachments/assets/bf92879b-5613-4c09-a7b2-88e202506bec" />
-<img width="3054" height="1441" alt="image" src="https://github.com/user-attachments/assets/e10ea005-1e2d-4cd0-be68-ee4a207e2f2f" />
-<img width="1250" height="1418" alt="image" src="https://github.com/user-attachments/assets/71c99877-9c9f-494f-a8e9-8a780755d72d" />
-<img width="1276" height="886" alt="image" src="https://github.com/user-attachments/assets/954e6fba-28dd-40f4-9ff9-f9963c6f2789" />
-
-
+| 버전 | 변경 사항 | 날짜 |
+|------|---------|------|
+| v1.0 | 초기 프로젝트 생성 (Session + CharacterEncodeFilter) | 2026-06-11 |
+| v1.1 | RequestLogFilter 추가 및 Filter 순서 최적화 | 2026-06-12 |
 

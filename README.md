@@ -417,6 +417,14 @@ web.xml에 등록하면 등록 순서대로 필터가 적용됩니다:
 
 ---
 
+<hr>
+<br>
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/6d1f3da1-b2a4-44cf-812a-2e6400bb780c" />
+<img width="977" height="540" alt="image" src="https://github.com/user-attachments/assets/e9344cd8-ff27-41b8-840d-2d6073835672" />
+<img width="791" height="341" alt="image" src="https://github.com/user-attachments/assets/69a0695d-b46c-44d1-bb25-eb8d0149a323" />
+<img width="791" height="341" alt="image" src="https://github.com/user-attachments/assets/50d49679-d439-4cc5-837c-65f436500ba8" />
+
+
 ## 🔗 관련 링크
 
 - [GitHub Repository](https://github.com/metaapple/ex04)

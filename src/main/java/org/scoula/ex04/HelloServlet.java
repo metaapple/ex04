@@ -1,6 +1,7 @@
 package org.scoula.ex04;
 
 import java.io.*;
+import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 
@@ -24,4 +25,18 @@ public class HelloServlet extends HttpServlet {
 
     public void destroy() {
     }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String addr = req.getParameter("addr");
+        resp.setContentType("text/html;charset=UTF-8");
+
+        // Hello
+        PrintWriter out = resp.getWriter();
+        out.println("<html><body>");
+        out.println("<h1>" + addr + "</h1>");
+        out.println("</body></html>");
+    }
+
 }

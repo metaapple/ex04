@@ -419,10 +419,59 @@ web.xml에 등록하면 등록 순서대로 필터가 적용됩니다:
 
 <hr>
 <br>
+<img width="807" height="215" alt="image" src="https://github.com/user-attachments/assets/4c3031a2-efee-4f67-842d-1ef1dc2cf460" />
+<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/2ad7b4cf-4a1b-4c8d-bf76-33a19bcd3b04" />
+<img width="2440" height="974" alt="image" src="https://github.com/user-attachments/assets/4b19f1a5-dd9c-48ff-8e69-bb5650b832ef" />
+<img width="2440" height="974" alt="image" src="https://github.com/user-attachments/assets/65431037-5963-4c6e-bbb0-a5ce8f350e51" />
+<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/2d5dc162-aaf6-49b2-bb26-ada22e94aafb" />
+
+
+
+
+
+<hr>
+<br>
 <img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/6d1f3da1-b2a4-44cf-812a-2e6400bb780c" />
 <img width="977" height="540" alt="image" src="https://github.com/user-attachments/assets/e9344cd8-ff27-41b8-840d-2d6073835672" />
 <img width="791" height="341" alt="image" src="https://github.com/user-attachments/assets/69a0695d-b46c-44d1-bb25-eb8d0149a323" />
+<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/a8c439f2-a473-4ee4-9740-aebd3ca45fc4" />
 <img width="791" height="341" alt="image" src="https://github.com/user-attachments/assets/50d49679-d439-4cc5-837c-65f436500ba8" />
+<img width="2515" height="1497" alt="image" src="https://github.com/user-attachments/assets/5189028a-b353-4033-8772-5641a175090d" />
+<img width="2515" height="1497" alt="image" src="https://github.com/user-attachments/assets/d4091375-3ab7-402c-873a-099fda8ae823" />
+<img width="1250" height="1418" alt="image" src="https://github.com/user-attachments/assets/bc68e0a0-190b-4b78-9064-67b2b1ca7f3c" />
+<img width="1276" height="886" alt="image" src="https://github.com/user-attachments/assets/cebc0c4c-2e05-4612-b04e-f9a645bcf14d" />
+
+
+<hr>
+<br>
+
+<img width="2367" height="1643" alt="image" src="https://github.com/user-attachments/assets/5b94adc5-c4de-45c4-81f9-6ce645f622b3" />
+<img width="2367" height="1643" alt="image" src="https://github.com/user-attachments/assets/1fd2c87a-1a64-453e-858b-6c2cf66d930d" />
+
+<br>
+
+```
+
+==> 콘솔 한글 깨짐 현상 --> 아래 2가지 설정하고, tomcat재시작
+
+-Dfile.encoding=UTF-8
+
+```
+
+<br>
+
+<img width="3499" height="1609" alt="image" src="https://github.com/user-attachments/assets/08e9163b-b1ee-42f3-ac53-6437b284ca4e" />
+
+
+<br>
+```
+
+java.util.logging.ConsoleHandler.encoding = EUC-KR
+
+```
+
+<br>
+
 
 
 ## 🔗 관련 링크
